@@ -3,14 +3,7 @@ This module contains the main CLI functionality for the RAFT project.
 """
 
 import argparse
-from raft import (
-    files_helper,
-    embeddings_helpers,
-    substack_embeddings,
-    generate_finetune,
-    oai_finetune,
-    memories,
-)
+import sys
 
 
 def action_doc() -> str:
@@ -78,41 +71,67 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    if args.action == "fetch":
-        substack_embeddings.main(args.name)
-    elif args.action == "chunk":
-        files_helper.chunker(args.name)
-    elif args.action == "embed":
-        embeddings_helpers.store_grounding_embeddings(args.name)
-    elif args.action == "ft:gen":
-        if args.oai:
-            oai_finetune.create_openai_finetune_file(args.name)
-        elif args.generic:
-            generate_finetune.generate_finetune(args.name)
+    try:
+        if args.action == "fetch":
+            from raft import substack_embeddings
+
+            substack_embeddings.main(args.name)
+        elif args.action == "chunk":
+            from raft import files_helper
+
+            files_helper.chunker(args.name)
+        elif args.action == "embed":
+            from raft import embeddings_helpers
+
+            embeddings_helpers.store_grounding_embeddings(args.name)
+        elif args.action == "ft:gen":
+            if args.oai:
+                from raft import oai_finetune
+
+                oai_finetune.create_openai_finetune_file(args.name)
+            elif args.generic:
+                from raft import generate_finetune
+
+                generate_finetune.generate_finetune(args.name)
+            else:
+                from raft import generate_finetune
+
+                generate_finetune.generate_finetune(args.name)
+                oai_finetune.create_openai_finetune_file(args.name)
+        elif args.action == "ft:run":
+            from raft import oai_finetune
+
+            oai_finetune.run_oai_finetune(args.name)
+        elif args.action == "bench:setup":
+            if args.oai:
+                from raft import oai_finetune
+
+                oai_finetune.create_openai_finetune_file(args.name, "benchmark")
+            elif args.generic:
+                from raft import generate_finetune
+
+                generate_finetune.generate_finetune(args.name)
+            else:
+                from raft import generate_finetune
+
+                generate_finetune.generate_benchmark(args.name)
+                oai_finetune.create_openai_finetune_file(args.name, "benchmark")
+        elif args.action == "ask":
+            if args.question is None:
+                print("Please provide a question using the --question argument.")
+            else:
+                from raft import memories
+
+                memory_manager = memories.MemoryManager(
+                    args.name, {}
+                )  # Empty metadata for now
+                answer = memory_manager.ask_question(args.question)
+                print(f"Answer: {answer}")
         else:
-            generate_finetune.generate_finetune(args.name)
-            oai_finetune.create_openai_finetune_file(args.name)
-    elif args.action == "ft:run":
-        oai_finetune.run_oai_finetune(args.name)
-    elif args.action == "bench:setup":
-        if args.oai:
-            oai_finetune.create_openai_finetune_file(args.name, "benchmark")
-        elif args.generic:
-            generate_finetune.generate_finetune(args.name)
-        else:
-            generate_finetune.generate_benchmark(args.name)
-            oai_finetune.create_openai_finetune_file(args.name, "benchmark")
-    elif args.action == "ask":
-        if args.question is None:
-            print("Please provide a question using the --question argument.")
-        else:
-            memory_manager = memories.MemoryManager(
-                args.name, {}
-            )  # Empty metadata for now
-            answer = memory_manager.ask_question(args.question)
-            print(f"Answer: {answer}")
-    else:
-        print(f"Unknown action: {args.action}")
+            print(f"Unknown action: {args.action}")
+    except ImportError as e:
+        print(f"Error: Could not load required module for '{args.action}' action: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
