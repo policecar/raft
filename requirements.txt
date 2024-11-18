@@ -1,7 +1,9 @@
 beautifulsoup4>=4.12.3
 chromadb==0.5.18
 openai>=1.14.3
-requests>=2.31.0
-tiktoken>=0.6.0
 pandas>=2.2.1
+pre-commit>=4.0.1
 pynput>=1.7.6
+requests>=2.31.0
+ruff>=0.7.4
+tiktoken>=0.6.0
