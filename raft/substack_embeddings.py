@@ -50,9 +50,8 @@ def fetch_and_parse(url: str) -> Generator[Dict[str, Any], None, None]:
         offset += limit
 
 
-def main(blog: str) -> None:
+def main(url: str) -> None:
     """Main function to fetch and save blog posts."""
-    url = f"https://{blog}.substack.com"
     filename = f'data/{url.replace("https://", "").replace(".", "-")}.jsonl'
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w") as f:
