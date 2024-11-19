@@ -96,7 +96,7 @@ def run_oai_finetune(name: str) -> None:
     """
     models = ["gpt-3.5-turbo"]
     status_dict: Dict[str, str] = {model: "" for model in models}
-    filename = f"data/{name}_finetune_openai.jsonl"
+    filename = f"data/{name}/{name}_finetune_openai.jsonl"
 
     print(f"uploading file: {filename}")
     with open(file=filename, mode="rb") as source_file:
@@ -135,7 +135,7 @@ def create_openai_finetune_file(
         List[List[Union[Dict[str, Any], SystemMessageParam]]]:
             The fine-tuning data.
     """
-    with open(f"data/{name}_{type}.json") as f:
+    with open(f"data/{name}/{name}_{type}.json") as f:
         data = json.load(f)
 
     # Group the examples and reverse the order within each group
@@ -183,7 +183,7 @@ def create_openai_finetune_file(
         finetune_data = group_data + finetune_data
 
     # Save the fine-tuned data to a new JSONL file
-    with open(f"data/{name}_{type}_openai.jsonl", "w") as f:
+    with open(f"data/{name}/{name}_{type}_openai.jsonl", "w") as f:
         finetune_data.reverse()
         for item in finetune_data:
             f.write(json.dumps({"messages": item}))

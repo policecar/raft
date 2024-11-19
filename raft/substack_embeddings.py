@@ -52,7 +52,8 @@ def fetch_and_parse(url: str) -> Generator[Dict[str, Any], None, None]:
 
 def main(url: str) -> None:
     """Main function to fetch and save blog posts."""
-    filename = f'data/{url.replace("https://", "").replace(".", "-")}.jsonl'
+    name = url.split("://", 1)[1].replace(".", "-")
+    filename = f"data/{name}/{name}.jsonl"
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w") as f:
         for post in fetch_and_parse(url):
@@ -63,6 +64,6 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) != 2:
-        print("Usage: python substack_embeddings.py <blog_name>")
+        print("Usage: python substack_embeddings.py <https_url_of_blog>")
         sys.exit(1)
     main(sys.argv[1])

@@ -95,6 +95,7 @@ def main() -> None:
                 generate_finetune.generate_finetune(args.name)
             else:
                 from raft import generate_finetune
+                from raft import oai_finetune
 
                 generate_finetune.generate_finetune(args.name)
                 oai_finetune.create_openai_finetune_file(args.name)

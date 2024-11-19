@@ -112,8 +112,8 @@ def chunker(name: str) -> None:
     Args:
         name (str): The name of the file to process (without extension).
     """
-    sourcefile = f"data/{name}.jsonl"
-    outputfile = f"data/{name}_chunked.jsonl"
+    sourcefile = f"data/{name}/{name}.jsonl"
+    outputfile = f"data/{name}/{name}_chunked.jsonl"
 
     try:
         # Read the JSONL file line by line

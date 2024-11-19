@@ -1,44 +1,37 @@
-from typing import Dict, Tuple, Any, Generator, List
 import json
+import os
 import tiktoken
 import pandas as pd
+
 from pandas import DataFrame
+from typing import Dict, Tuple, Any, Generator, List
+
 
 MAX_EMBEDDING_LENGTH = 2048
 encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
 
 
-def begin_json_file(name: str) -> None:
+def begin_json_file(filename: str) -> None:
     """
     Begin a JSON file by writing the opening bracket.
 
     Args:
-        name (str): The name of the file (without extension).
+        filename (str): The name of the file.
     """
-    write_to_file(name, "[\n", "w")
+    with open(filename, "w") as f:
+        f.write("[\n")
 
 
-def end_json_file(name: str) -> None:
+
+def end_json_file(filename: str) -> None:
     """
     End a JSON file by writing the closing bracket.
 
     Args:
-        name (str): The name of the file (without extension).
+        filename (str): The name of the file.
     """
-    write_to_file(name, "\n]", "a")
-
-
-def write_to_file(name: str, data: str, mode: str = "a") -> None:
-    """
-    Write data to a file.
-
-    Args:
-        name (str): The name of the file (without extension).
-        data (str): The data to write.
-        mode (str, optional): The file open mode. Defaults to "a" (append).
-    """
-    with open(f"data/{name}.json", mode) as f:
-        f.write(data)
+    with open(filename, "a") as f:
+        f.write("\n]")
 
 
 def write_context_to_file(
@@ -53,7 +46,7 @@ def write_context_to_file(
         suffix (int): The suffix number.
         j (int): The index of the context.
     """
-    with open(f"data/{filename}", "a") as f:
+    with open(filename, "a") as f:
         if suffix > 1 or j > 0:
             f.write(",\n")
         json.dump(context, f, indent=4)
@@ -154,8 +147,8 @@ def chunker(name: str) -> None:
     Args:
         name (str): The name of the file to process (without extension).
     """
-    sourcefile = f"data/{name}.jsonl"
-    outputfile = f"data/{name}_chunked.jsonl"
+    sourcefile = f"data/{name}/{name}.jsonl"
+    outputfile = f"data/{name}/{name}_chunked.jsonl"
 
     try:
         with open(sourcefile, "r") as f:

@@ -83,7 +83,7 @@ def store_grounding_embeddings(name: str) -> None:
     chroma_client = PersistentClient(path=f"data/{name}")
     collection = chroma_client.get_or_create_collection(name)
 
-    sourcefile = f"data/{name}_chunked.jsonl"
+    sourcefile = f"data/{name}/{name}_chunked.jsonl"
 
     with open(sourcefile, "r") as f:
         for line in f:

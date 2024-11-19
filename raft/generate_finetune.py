@@ -17,10 +17,10 @@ def process_transcripts(name: str, suffix: str, is_benchmark: bool) -> None:
         no_useful_check (bool, optional): Whether to skip the usefulness check.
         Defaults to False.
     """
-    with open(f"data/{name}_transcript_{suffix}.json") as f:
+    with open(f"data/{name}/{name}_transcript_{suffix}.json") as f:
         interview_data = json.load(f)
 
-    target_file = f"{name}_{'benchmark' if is_benchmark else 'finetune'}.json"
+    target_file = f"data/{name}/{name}_{'benchmark' if is_benchmark else 'finetune'}.json"
     index = suffix if isinstance(suffix, int) else 1
     metadata: dict[MetaDataKeyEnum, Any] = {
         MetaDataKeyEnum[key]: interview_data[key]
@@ -54,7 +54,7 @@ def generate_finetune(name: str) -> None:
     Args:
         name (str): The name of the dataset.
     """
-    begin_json_file(f"{name}_finetune")
+    begin_json_file(f"data/{name}/{name}_finetune.json")
     i = 1
     while True:
         try:
@@ -66,8 +66,8 @@ def generate_finetune(name: str) -> None:
         time.sleep(2)
         i += 1
 
-    end_json_file(name)
-    print(f"Generic finetune file generated in: data/{name}_finetune.json")
+    end_json_file(f"data/{name}/{name}_finetune.json")
+    print(f"Generic finetune file generated in: data/{name}/{name}_finetune.json")
 
 
 def generate_benchmark(name: str) -> None:
@@ -77,7 +77,7 @@ def generate_benchmark(name: str) -> None:
     Args:
         name (str): The name of the dataset.
     """
-    begin_json_file(f"{name}_benchmark")
+    begin_json_file(f"data/{name}/{name}_benchmark.json")
     process_transcripts(name, "benchmark", True)
-    end_json_file(f"{name}_benchmark")
+    end_json_file(f"data/{name}/{name}_benchmark.json")
     print("Done!")
